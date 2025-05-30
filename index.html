@@ -9,10 +9,269 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <title>Hello, world!</title>
+    <style>
+      :root {
+        --main-bg: #f8fafc;
+        --main-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
+        --card-bg: #fff;
+        --text-main: #212529;
+        --text-muted: #6c757d;
+        --input-bg: #f8fafc;
+        --border-color: #dee2e6;
+      }
+      body.dark-mode {
+        --main-bg: #181a20;
+        --main-bg-gradient: linear-gradient(135deg, #23272f 0%, #181a20 100%);
+        --card-bg: #23272f;
+        --text-main: #f1f3f6;
+        --text-muted: #b0b3b8;
+        --input-bg: #23272f;
+        --border-color: #343a40;
+      }
+      body {
+        background: var(--main-bg-gradient);
+        color: var(--text-main);
+      }
+      .card, .rounded-4, .rounded-3 {
+        background: var(--card-bg) !important;
+        color: var(--text-main) !important;
+        border-color: var(--border-color) !important;
+      }
+      .form-control, textarea {
+        background: var(--input-bg) !important;
+        color: var(--text-main) !important;
+        border-color: var(--border-color) !important;
+      }
+      .text-muted, .form-label {
+        color: var(--text-muted) !important;
+      }
+      .border-primary {
+        border-color: #0d6efd !important;
+      }
+      .toggle-mode-btn {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        z-index: 10;
+      }
+      .toggle-mode-btn .bi {
+        font-size: 1.5rem;
+      }
+      .image-preview-wrapper {
+        position: relative;
+        display: inline-block;
+      }
+      .clear-img-btn {
+        display: none;
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 5;
+        background: rgba(0,0,0,0.6);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .clear-img-btn:hover {
+        background: #dc3545;
+        color: #fff;
+      }
+      #imagePasteArea:hover .image-preview-wrapper.show-img .clear-img-btn {
+        display: flex;
+      }
+      #imagePasteArea.dragover {
+        border-color: #0dcaf0 !important;
+        background: #e0f7fa !important;
+        box-shadow: 0 0 0 0.2rem rgba(13,202,240,.25);
+      }
+    </style>
   </head>
-  <body>
-    <h1>Hello, world!</h1>
+  <body style="background: var(--main-bg-gradient); min-height: 100vh;">
+    <button id="toggleModeBtn" class="btn btn-outline-secondary toggle-mode-btn" title="Toggle dark/light mode">
+      <i id="toggleModeIcon" class="bi bi-moon"></i>
+    </button>
+    <div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 100vh;">
+      <div class="w-100" style="max-width: 600px;">
+        <div class="text-center mb-4">
+          <h1 class="fw-bold text-primary" style="letter-spacing: 1px;">Generate Inteface And Mock Data From Image</h1>
+        </div>
+        <!-- Image Paste Input -->
+        <div class="card shadow-sm mb-4 border-0 rounded-4">
+          <div class="card-body">
+            <label for="imagePasteArea" class="form-label fw-semibold">Paste (Ctrl+V) an image here:</label>
+            <div id="imagePasteArea" class="border border-2 border-primary rounded-3 p-4 text-center bg-light position-relative" style="min-height: 200px; cursor: pointer; transition: box-shadow 0.2s;">
+              <span id="placeholderText" class="text-secondary"><i class="bi bi-image" style="font-size: 2rem;"></i><br>Click or press Ctrl+V to paste an image</span>
+              <span class="image-preview-wrapper" id="imgPreviewWrapper">
+                <img id="previewImage" src="" alt="Preview" class="img-fluid d-none mt-2 rounded-3 shadow-sm" style="max-height: 180px;" />
+                <button id="clearImgBtn" type="button" class="clear-img-btn" title="Clear image"><i class="bi bi-trash"></i></button>
+              </span>
+            </div>
+            <input type="file" id="hiddenFileInput" accept="image/*" class="d-none" />
+            <div class="d-flex justify-content-end mt-3">
+              <button id="generateBtn" type="button" class="btn btn-primary d-flex align-items-center gap-1 shadow-sm"><i class="bi bi-lightning-charge"></i>Generate</button>
+            </div>
+          </div>
+        </div>
+        <!-- Textarea with Copy and Download buttons -->
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="card-body">
+            <label for="resultTextarea" class="form-label fw-semibold">Generated Code</label>
+            <textarea id="resultTextarea" class="form-control rounded-3" rows="4" placeholder="Code will appear here..." style="resize: none; overflow: hidden; background: #f8fafc;"></textarea>
+            <div class="d-flex justify-content-end gap-2 mt-2">
+              <button id="copyBtn" type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 shadow-sm" title="Copy"><i class="bi bi-clipboard"></i>Copy</button>
+              <button id="downloadBtn" type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 shadow-sm" title="Download as .tsx"><i class="bi bi-download"></i>Download</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script>
+      const pasteArea = document.getElementById('imagePasteArea');
+      const previewImage = document.getElementById('previewImage');
+      const placeholderText = document.getElementById('placeholderText');
+      const hiddenFileInput = document.getElementById('hiddenFileInput');
+      const imgPreviewWrapper = document.getElementById('imgPreviewWrapper');
+      const generateBtn = document.getElementById('generateBtn');
 
+      // Allow click to open file dialog
+      pasteArea.addEventListener('click', () => hiddenFileInput.click());
+
+      // Handle file input change
+      hiddenFileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          const file = e.target.files[0];
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (ev) => showImage(ev.target.result);
+            reader.readAsDataURL(file);
+          }
+        }
+      });
+
+      // Handle paste event
+      pasteArea.addEventListener('paste', (e) => {
+        const items = e.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image') !== -1) {
+            const file = items[i].getAsFile();
+            const reader = new FileReader();
+            reader.onload = (ev) => showImage(ev.target.result);
+            reader.readAsDataURL(file);
+            e.preventDefault();
+            break;
+          }
+        }
+      });
+
+      function showImage(src) {
+        previewImage.src = src;
+        previewImage.classList.remove('d-none');
+        placeholderText.classList.add('d-none');
+        imgPreviewWrapper.classList.add('show-img');
+        updateGenerateBtnState();
+      }
+
+      // Auto-resize textarea
+      const resultTextarea = document.getElementById('resultTextarea');
+      function autoResizeTextarea() {
+        resultTextarea.style.height = 'auto';
+        resultTextarea.style.height = resultTextarea.scrollHeight + 'px';
+      }
+      resultTextarea.addEventListener('input', autoResizeTextarea);
+      // Initial resize
+      autoResizeTextarea();
+
+      // Copy button
+      document.getElementById('copyBtn').addEventListener('click', () => {
+        resultTextarea.select();
+        document.execCommand('copy');
+      });
+
+      // Download button
+      document.getElementById('downloadBtn').addEventListener('click', () => {
+        const blob = new Blob([resultTextarea.value], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'ui-code.tsx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+      });
+
+      // Dark/Light mode toggle
+      const toggleBtn = document.getElementById('toggleModeBtn');
+      const toggleIcon = document.getElementById('toggleModeIcon');
+      function setMode(dark) {
+        if (dark) {
+          document.body.classList.add('dark-mode');
+          toggleIcon.classList.remove('bi-moon');
+          toggleIcon.classList.add('bi-sun');
+          localStorage.setItem('aq_dark_mode', '1');
+        } else {
+          document.body.classList.remove('dark-mode');
+          toggleIcon.classList.remove('bi-sun');
+          toggleIcon.classList.add('bi-moon');
+          localStorage.setItem('aq_dark_mode', '0');
+        }
+      }
+      // Load mode from localStorage
+      setMode(localStorage.getItem('aq_dark_mode') === '1');
+      toggleBtn.addEventListener('click', () => {
+        const isDark = document.body.classList.contains('dark-mode');
+        setMode(!isDark);
+      });
+
+      const clearImgBtn = document.getElementById('clearImgBtn');
+      clearImgBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        previewImage.src = '';
+        previewImage.classList.add('d-none');
+        placeholderText.classList.remove('d-none');
+        hiddenFileInput.value = '';
+        imgPreviewWrapper.classList.remove('show-img');
+        updateGenerateBtnState();
+      });
+
+      function updateGenerateBtnState() {
+        if (previewImage.classList.contains('d-none')) {
+          generateBtn.setAttribute('disabled', 'disabled');
+        } else {
+          generateBtn.removeAttribute('disabled');
+        }
+      }
+      // Khởi tạo trạng thái ban đầu
+      updateGenerateBtnState();
+
+      // Drag & Drop support for imagePasteArea
+      pasteArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        pasteArea.classList.add('dragover');
+      });
+      pasteArea.addEventListener('dragleave', (e) => {
+        pasteArea.classList.remove('dragover');
+      });
+      pasteArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        pasteArea.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          const file = e.dataTransfer.files[0];
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (ev) => showImage(ev.target.result);
+            reader.readAsDataURL(file);
+          }
+        }
+      });
+    </script>
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
@@ -23,5 +282,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
     -->
+    <footer class="text-center text-muted small py-3" style="letter-spacing:1px;">
+      &copy; AQ Intern 05/2025
+    </footer>
   </body>
 </html>
