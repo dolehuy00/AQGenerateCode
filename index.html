@@ -125,7 +125,7 @@
             <textarea id="resultTextarea" class="form-control rounded-3" rows="4" placeholder="Code will appear here..." style="resize: none; overflow: hidden; background: #f8fafc;"></textarea>
             <div class="d-flex justify-content-end gap-2 mt-2">
               <button id="copyBtn" type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 shadow-sm" title="Copy"><i class="bi bi-clipboard"></i>Copy</button>
-              <button id="downloadBtn" type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 shadow-sm" title="Download as .tsx"><i class="bi bi-download"></i>Download</button>
+              <button id="downloadBtn" type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 shadow-sm" title="Download as .ts"><i class="bi bi-download"></i>Download</button>
             </div>
           </div>
         </div>
@@ -200,7 +200,7 @@
         const blob = new Blob([resultTextarea.value], { type: 'text/plain' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'ui-code.tsx';
+        a.download = 'generated-code.ts';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -269,6 +269,40 @@
             reader.onload = (ev) => showImage(ev.target.result);
             reader.readAsDataURL(file);
           }
+        }
+      });
+
+      // Gửi ảnh lên Flask API khi nhấn Generate
+      generateBtn.addEventListener('click', async () => {
+        // Lấy ảnh từ previewImage (dạng base64)
+        if (previewImage.classList.contains('d-none') || !previewImage.src) return;
+        resultTextarea.value = '';
+        autoResizeTextarea();
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating...';
+        try {
+          // Chuyển base64 sang blob
+          const blob = await (await fetch(previewImage.src)).blob();
+          const formData = new FormData();
+          formData.append('image', blob, 'input.png');
+          // Gửi lên API Flask
+          const response = await fetch('http://localhost:5000/generate', {
+            method: 'POST',
+            body: formData
+          });
+          if (!response.ok) throw new Error('API error');
+          const data = await response.json();
+          if (data.code) {
+            resultTextarea.value = data.code;
+          } else {
+            resultTextarea.value = data.error || 'Unknown error';
+          }
+        } catch (err) {
+          resultTextarea.value = 'Error: ' + err.message;
+        } finally {
+          generateBtn.disabled = false;
+          generateBtn.innerHTML = '<i class="bi bi-lightning-charge"></i>Generate';
+          autoResizeTextarea();
         }
       });
     </script>
