@@ -1,9 +1,13 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from generate_infoviewmodel import generate_code_from_image
 
 app = Flask(__name__)
 CORS(app)
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 @app.route('/generate', methods=['POST'])
 def generate():
