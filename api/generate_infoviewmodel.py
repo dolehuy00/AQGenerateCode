@@ -2,6 +2,17 @@ import google.generativeai as genai
 from ocr import get_ocr_text_from_image
 import os
 import tempfile
+import traceback
+from jinja2 import Template
+import re
+
+def strip_markdown_codeblock(text):
+    # Loại bỏ code block markdown nếu có
+    pattern = r"^```[a-zA-Z]*\n([\s\S]*?)\n```$"
+    match = re.match(pattern, text.strip())
+    if match:
+        return match.group(1)
+    return text
 
 def generate_code_from_image(image_bytes):
     # Save image_bytes to a temp file
@@ -11,16 +22,32 @@ def generate_code_from_image(image_bytes):
     try:
         # Get OCR text
         ocr_text = get_ocr_text_from_image(tmp_path)
+        print("OCR text:", ocr_text)
         if ocr_text is None:
             raise Exception("Failed to get OCR text from the image.")
-        # Prepare prompt
-        prompt = f"""You are an advanced AI capable of analyzing images and generating structured data representations. Your task is to process an image containing a table and extract relevant information to generate a TypeScript interface and corresponding mock data.\nAnalyze the provided image to identify the table's actual column headers and content. Based on the extracted data, generate:\nA TypeScript interface named IInfoViewModel that includes all identified attributes with their appropriate data types. Ensure that all attributes are optional (using ?) to account for cases where data might be undefined. Use Vietnamese attribute names in the interface, formatted in camelCase, and include a comment in English to describe each attribute.\nAn array named mockData of type IInfoViewModel[], populated with mock entries based on the extracted content. If any data is missing in the table, represent it as undefined in the mock data. Correct any spelling or typographical errors in the extracted data to ensure accuracy in the mock data.\nReturn in plain text without markdown.\nNote:\nThe following is just a sample output format and does not reflect the data in the image. Use it as a structural reference only:\n\n// Example output format:\nexport interface IInfoViewModel {{\n    id?: number; // ID\n    cotChuoi?: string; // String column\n    cotSo?: number; // Number column\n    cotNgay1?: string; // Date column 1 dd/mm/yyyy\n    cotNgay2?: string; // Date column 2 dd/mm/yyyy\n    cotBoolean?: boolean; // Boolean column\n    cotTien?: number; // Price column\n}}\n\n\nexport const mockData: IInfoViewModel[] = [\n    {{\n        id: 1,\n        cotChuoi: "Example String",\n        cotSo: 123,\n        cotNgay1: "01/01/2023",\n        cotNgay2: "02/01/2023",\n        cotBoolean: true,\n        cotTien: 100000,\n    }},\n    {{\n        id: 2,\n        cotChuoi: "Another String",\n        cotSo: 456,\n        cotNgay1: "02/02/2023",\n        cotNgay2: "03/02/2023",\n        cotBoolean: false,\n        cotTien: 200000,\n    }},\n    {{\n        id: 3,\n        cotChuoi: "More Strings",\n        cotSo: 789,\n        cotNgay1: "03/03/2023",\n        cotNgay2: "04/03/2023",\n        cotBoolean: true,\n        cotTien: 300000,\n    }},\n    {{\n        id: 4,\n        cotChuoi: "Fourth String",\n        cotSo: 101,\n        cotNgay1: "04/04/2023",\n        cotNgay2: "05/04/2023",\n        cotBoolean: false,\n        cotTien: 400000,\n    }},\n]\n\nBe sure that the actual structure of the interface and mock data you generate corresponds to the real data found in the image, not the sample above. Use Vietnamese attribute names in camelCase, correct any spelling or typographical errors in the extracted data, and only return the TypeScript code block with the interface and mock data. Do not include any explanations, descriptions, or other content.\n\nHere is the OCR text from the image:\n---\n{ocr_text}\n---"""# Configure your API key
+        # Read prompt template from Jinja2 file
+        with open(os.path.join(os.path.dirname(__file__), 'prompt.j2'), 'r', encoding='utf-8') as f:
+            prompt_template = f.read()
+        print("Prompt template loaded")
+        # Render prompt using Jinja2
+        prompt = Template(prompt_template).render(ocr_text=ocr_text)
+        print(prompt)
+        print("Prompt ready")
         API_KEY = os.environ.get("GEMINI_API_KEY")
+        print("API_KEY:", API_KEY)
         genai.configure(api_key=API_KEY)
         model = genai.GenerativeModel('gemini-1.5-flash-latest')
-        response = model.generate_content(prompt)
-        generated_code = response.text
-        return generated_code
+        try:
+            response = model.generate_content(prompt)
+            print("Gemini response:", response)
+            generated_code = response.text
+            # Loại bỏ markdown code block nếu có
+            generated_code = strip_markdown_codeblock(generated_code)
+            return generated_code
+        except Exception as e:
+            print("Error when calling Gemini API:", str(e))
+            traceback.print_exc()
+            raise
     finally:
         try:
             os.remove(tmp_path)
