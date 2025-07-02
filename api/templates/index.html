@@ -117,49 +117,104 @@
         <i id="toggleModeIcon" class="bi bi-moon"></i>
     </button>
     <div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 100vh;">
-        <div class="w-100" style="max-width: 600px;">
-            <div class="text-center mb-4">
-                <h1 class="fw-bold text-primary" style="letter-spacing: 1px;">Generate Inteface And Mock Data From Image
-                </h1>
-            </div>
-            <!-- Image Paste Input -->
-            <div class="card shadow-sm mb-4 border-0 rounded-4">
-                <div class="card-body">
-                    <label for="imagePasteArea" class="form-label fw-semibold">Paste (Ctrl+V) an image here:</label>
-                    <div id="imagePasteArea"
-                        class="border border-2 border-primary rounded-3 p-4 text-center bg-light position-relative"
-                        style="min-height: 200px; cursor: pointer; transition: box-shadow 0.2s;">
-                        <span id="placeholderText" class="text-secondary"><i class="bi bi-image"
-                                style="font-size: 2rem;"></i><br>Click or press Ctrl+V to paste an image</span>
-                        <span class="image-preview-wrapper" id="imgPreviewWrapper">
-                            <img id="previewImage" src="" alt="Preview"
-                                class="img-fluid d-none mt-2 rounded-3 shadow-sm" style="max-height: 180px;" />
-                            <button id="clearImgBtn" type="button" class="clear-img-btn" title="Clear image"><i
-                                    class="bi bi-trash"></i></button>
-                        </span>
-                    </div>
-                    <input type="file" id="hiddenFileInput" accept="image/*" class="d-none" />
-                    <div class="d-flex justify-content-end mt-3">
-                        <button id="generateBtn" type="button"
-                            class="btn btn-primary d-flex align-items-center gap-1 shadow-sm"><i
-                                class="bi bi-lightning-charge"></i>Generate</button>
+        <div class="w-100" style="max-width: 1200px;">
+            <ul class="nav nav-tabs mb-4" id="mainTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Image ➔ Interface/Mock</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Interface ➔ Columns</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="mainTabsContent">
+                <!-- Tab 1: Image to Interface/MockData -->
+                <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                    <div class="row g-4">
+                        <div class="col-md-12">
+                            <div class="text-center mb-4">
+                                <h1 class="fw-bold text-primary" style="letter-spacing: 1px;">Generate Inteface And Mock Data From Image</h1>
+                            </div>
+                            <!-- Image Paste Input -->
+                            <div class="card shadow-sm mb-4 border-0 rounded-4">
+                                <div class="card-body">
+                                    <label for="imagePasteArea" class="form-label fw-semibold">Paste (Ctrl+V) an image here:</label>
+                                    <div id="imagePasteArea"
+                                        class="border border-2 border-primary rounded-3 p-4 text-center bg-light position-relative"
+                                        style="min-height: 200px; cursor: pointer; transition: box-shadow 0.2s;">
+                                        <span id="placeholderText" class="text-secondary"><i class="bi bi-image"
+                                                style="font-size: 2rem;"></i><br>Click or press Ctrl+V to paste an image</span>
+                                        <span class="image-preview-wrapper" id="imgPreviewWrapper">
+                                            <img id="previewImage" src="" alt="Preview"
+                                                class="img-fluid d-none mt-2 rounded-3 shadow-sm" style="max-height: 180px;" />
+                                            <button id="clearImgBtn" type="button" class="clear-img-btn" title="Clear image"><i
+                                                    class="bi bi-trash"></i></button>
+                                        </span>
+                                    </div>
+                                    <input type="file" id="hiddenFileInput" accept="image/*" class="d-none" />
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <button id="generateBtn" type="button"
+                                            class="btn btn-primary d-flex align-items-center gap-1 shadow-sm"><i
+                                                class="bi bi-lightning-charge"></i>Generate</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Textarea with Copy and Download buttons -->
+                            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                                <div class="card-body">
+                                    <label for="resultTextarea" class="form-label fw-semibold">Generated Code</label>
+                                    <textarea id="resultTextarea" class="form-control rounded-3" rows="4"
+                                        placeholder="Code will appear here..."
+                                        style="resize: none; overflow: hidden; background: #f8fafc;"></textarea>
+                                    <div class="d-flex justify-content-end gap-2 mt-2">
+                                        <button id="copyBtn" type="button"
+                                            class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 shadow-sm"
+                                            title="Copy"><i class="bi bi-clipboard"></i>Copy</button>
+                                        <button id="downloadBtn" type="button"
+                                            class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 shadow-sm"
+                                            title="Download as .ts"><i class="bi bi-download"></i>Download</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Columns result -->
+                            <div class="card shadow-sm border-0 rounded-4">
+                                <div class="card-body">
+                                    <label for="columnsFromImageTextarea" class="form-label fw-semibold">Generated Columns Code</label>
+                                    <textarea id="columnsFromImageTextarea" class="form-control rounded-3" rows="12" readonly style="font-family:monospace;"></textarea>
+                                    <div class="d-flex justify-content-end gap-2 mt-2">
+                                        <button id="copyColumnsFromImageBtn" type="button"
+                                            class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 shadow-sm"
+                                            title="Copy"><i class="bi bi-clipboard"></i>Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <!-- Textarea with Copy and Download buttons -->
-            <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-body">
-                    <label for="resultTextarea" class="form-label fw-semibold">Generated Code</label>
-                    <textarea id="resultTextarea" class="form-control rounded-3" rows="4"
-                        placeholder="Code will appear here..."
-                        style="resize: none; overflow: hidden; background: #f8fafc;"></textarea>
-                    <div class="d-flex justify-content-end gap-2 mt-2">
-                        <button id="copyBtn" type="button"
-                            class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 shadow-sm"
-                            title="Copy"><i class="bi bi-clipboard"></i>Copy</button>
-                        <button id="downloadBtn" type="button"
-                            class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 shadow-sm"
-                            title="Download as .ts"><i class="bi bi-download"></i>Download</button>
+                <!-- Tab 2: Interface to Columns -->
+                <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                    <div class="row g-4">
+                        <div class="col-md-12">
+                            <div class="text-center mb-4">
+                                <h2 class="fw-bold text-success" style="letter-spacing: 1px;">Interface ➔ Columns</h2>
+                            </div>
+                            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                                <div class="card-body">
+                                    <label for="interfaceTextarea" class="form-label fw-semibold">Paste your TypeScript interface here:</label>
+                                    <textarea id="interfaceTextarea" class="form-control rounded-3" rows="10" placeholder="Paste your interface here..."></textarea>
+                                </div>
+                            </div>
+                            <div class="card shadow-sm border-0 rounded-4">
+                                <div class="card-body">
+                                    <label for="columnsTextarea" class="form-label fw-semibold">Generated Columns Code</label>
+                                    <textarea id="columnsTextarea" class="form-control rounded-3" rows="12" readonly style="font-family:monospace;"></textarea>
+                                    <div class="d-flex justify-content-end gap-2 mt-2">
+                                        <button id="copyColumnsBtn" type="button"
+                                            class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 shadow-sm"
+                                            title="Copy"><i class="bi bi-clipboard"></i>Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -306,11 +361,42 @@
             }
         });
 
-        // Gửi ảnh lên Flask API khi nhấn Generate
+        // --- Interface to Columns logic (Tab 2) ---
+        const interfaceTextarea = document.getElementById('interfaceTextarea');
+        const columnsTextarea = document.getElementById('columnsTextarea');
+        const copyColumnsBtn = document.getElementById('copyColumnsBtn');
+
+        interfaceTextarea.addEventListener('input', () => {
+            const code = interfaceTextarea.value;
+            fetch('/generate-columns', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ interface: code })
+            })
+            .then(res => res.json())
+            .then(data => {
+                columnsTextarea.value = data.columns || data.error || '';
+            });
+        });
+        copyColumnsBtn.addEventListener('click', () => {
+            columnsTextarea.select();
+            document.execCommand('copy');
+        });
+
+        // --- Image to Interface/MockData logic (Tab 1) ---
+        const columnsFromImageTextarea = document.getElementById('columnsFromImageTextarea');
+        const copyColumnsFromImageBtn = document.getElementById('copyColumnsFromImageBtn');
+        copyColumnsFromImageBtn.addEventListener('click', () => {
+            columnsFromImageTextarea.select();
+            document.execCommand('copy');
+        });
+
+        // Sửa lại generateBtn click để call thêm API generate-columns
         generateBtn.addEventListener('click', async () => {
             // Lấy ảnh từ previewImage (dạng base64)
             if (previewImage.classList.contains('d-none') || !previewImage.src) return;
             resultTextarea.value = '';
+            columnsFromImageTextarea.value = '';
             autoResizeTextarea();
             generateBtn.disabled = true;
             generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating...';
@@ -328,6 +414,16 @@
                 const data = await response.json();
                 if (data.code) {
                     resultTextarea.value = data.code;
+                    // Gọi API generate-columns
+                    fetch('/generate-columns', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ interface: data.code })
+                    })
+                    .then(res => res.json())
+                    .then(colData => {
+                        columnsFromImageTextarea.value = colData.columns || colData.error || '';
+                    });
                 } else {
                     resultTextarea.value = data.error || 'Unknown error';
                 }
