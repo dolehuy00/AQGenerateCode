@@ -1,0 +1,100 @@
+:root {
+    --main-bg: #f8fafc;
+    --main-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
+    --card-bg: #fff;
+    --text-main: #212529;
+    --text-muted: #6c757d;
+    --input-bg: #f8fafc;
+    --border-color: #dee2e6;
+}
+body.dark-mode {
+    --main-bg: #181a20;
+    --main-bg-gradient: linear-gradient(135deg, #23272f 0%, #181a20 100%);
+    --card-bg: #23272f;
+    --text-main: #f1f3f6;
+    --text-muted: #b0b3b8;
+    --input-bg: #23272f;
+    --border-color: #343a40;
+}
+body {
+    background: var(--main-bg-gradient);
+    color: var(--text-main);
+}
+.card,
+.rounded-4,
+.rounded-3 {
+    background: var(--card-bg) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+.form-control,
+textarea {
+    background: var(--input-bg) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+.text-muted,
+.form-label {
+    color: var(--text-muted) !important;
+}
+.border-primary {
+    border-color: #0d6efd !important;
+}
+.toggle-mode-btn {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    z-index: 10;
+}
+.toggle-mode-btn .bi {
+    font-size: 1.5rem;
+}
+.image-preview-wrapper {
+    position: relative;
+    display: inline-block;
+}
+.clear-img-btn {
+    display: none;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 5;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.clear-img-btn:hover {
+    background: #dc3545;
+    color: #fff;
+}
+#imagePasteArea:hover .image-preview-wrapper.show-img .clear-img-btn {
+    display: flex;
+}
+#imagePasteArea.dragover {
+    border-color: #0dcaf0 !important;
+    background: #e0f7fa !important;
+    box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, .25);
+}
+/* Dark mode for snippet library */
+body.dark-mode .snippet-card, body.dark-mode .snippet-form, body.dark-mode .snippet-ta, body.dark-mode .snippet-input {
+    background: var(--card-bg) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+body.dark-mode .snippet-btn {
+    background: var(--input-bg) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+body.dark-mode .list-group-item {
+    background: var(--card-bg) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+} 

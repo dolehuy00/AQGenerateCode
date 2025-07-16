@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from generate_infoviewmodel import generate_code_from_image
+import json
+import os
+SNIPPETS_FILE = os.path.join(os.path.dirname(__file__), 'snippets.json')
 
 app = Flask(__name__)
 CORS(app)
@@ -84,6 +87,57 @@ def generate_columns_from_interface(code):
         col_code += '        },\n'
     col_code += '    ],\n    []\n);'
     return col_code
+
+def load_snippets():
+    if not os.path.exists(SNIPPETS_FILE):
+        return []
+    with open(SNIPPETS_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def save_snippets(snippets):
+    with open(SNIPPETS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(snippets, f, ensure_ascii=False, indent=2)
+
+@app.route('/snippets', methods=['GET'])
+def get_snippets():
+    return jsonify(load_snippets())
+
+@app.route('/snippets', methods=['POST'])
+def add_snippet():
+    data = request.get_json()
+    name = data.get('name')
+    content = data.get('content')
+    if not name or not content:
+        return jsonify({'error': 'Missing name or content'}), 400
+    snippets = load_snippets()
+    new_id = max([s['id'] for s in snippets], default=0) + 1
+    snippet = {'id': new_id, 'name': name, 'content': content}
+    snippets.append(snippet)
+    save_snippets(snippets)
+    return jsonify(snippet)
+
+@app.route('/snippets/<int:snippet_id>', methods=['PUT'])
+def update_snippet(snippet_id):
+    data = request.get_json()
+    name = data.get('name')
+    content = data.get('content')
+    snippets = load_snippets()
+    for s in snippets:
+        if s['id'] == snippet_id:
+            if name: s['name'] = name
+            if content: s['content'] = content
+            save_snippets(snippets)
+            return jsonify(s)
+    return jsonify({'error': 'Snippet not found'}), 404
+
+@app.route('/snippets/<int:snippet_id>', methods=['DELETE'])
+def delete_snippet(snippet_id):
+    snippets = load_snippets()
+    new_snippets = [s for s in snippets if s['id'] != snippet_id]
+    if len(new_snippets) == len(snippets):
+        return jsonify({'error': 'Snippet not found'}), 404
+    save_snippets(new_snippets)
+    return jsonify({'success': True})
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1',port=5173,debug=True)

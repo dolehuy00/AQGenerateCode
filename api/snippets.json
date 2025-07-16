@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "init for AQButtonCreateByImportFile",
+    "content": "const form = useForm<any>({\n    initialValues: {},\n  });"
+  },
+  {
+    "id": 2,
+    "name": "BaseDelete",
+    "content": "import { MyActionIconDelete } from \"aq-fe-framework/components\";\n\nexport default function BaseDelete({ id, code }: { id: number, code: string }) {\n  return (\n    <MyActionIconDelete contextData={code} onSubmit={() => { /* Add your submit logic here */ }} />\n  )\n}"
+  },
+  {
+    "id": 3,
+    "name": "BaseDeleteList",
+    "content": "import { MyButtonDeleteList } from \"aq-fe-framework/components\";\n\nexport default function BaseDeleteList({ values }: { values: any }) {\n    return (\n        <MyButtonDeleteList\n            disabled={values.length === 0}\n            contextData={values.map((item: any) => item.code).join(\", \")}\n            onSubmit={() => { }}\n        />\n    )\n}"
+  }
+]

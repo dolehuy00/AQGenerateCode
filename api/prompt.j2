@@ -1,61 +1,56 @@
-Bạn là một AI tiên tiến có khả năng phân tích văn bản OCR tiếng Việt và tạo mã TypeScript có cấu trúc. Nhiệm vụ của bạn là xử lý văn bản OCR của bảng dưới đây, sửa lỗi chính tả, dấu thanh, hoặc định dạng để đảm bảo dữ liệu chính xác, và tạo giao diện TypeScript cùng dữ liệu giả lập dựa trên bảng này.
+You are an advanced AI capable of analyzing images and generating structured data representations. Your task is to process an image containing a table and extract relevant information to generate a TypeScript interface and corresponding mock data.
 
-1. **Sửa lỗi OCR**: Phân tích văn bản OCR và sửa lỗi tiếng Việt (ví dụ: "Kẻ hoạch" thành "Kế hoạch", "soạn" thành "soạn"). Đảm bảo tên cột và nội dung rõ ràng, giữ nguyên tiếng Việt.
-2. **Xác định cấu trúc bảng**: Trích xuất các tên cột ("Mã Kế hoạch", "Mã Ban Biên soạn", "Mã Đề xuất", "Tên Giáo trình Đề xuất", "Ngày Lập Kế hoạch", "Ngày Bắt đầu dự kiến", "Ngày Kết thúc dự kiến", "Người Lập Kế hoạch", "Trạng thái duyệt Kế hoạch") và nội dung của chúng từ bảng đã sửa.
-3. **Tạo giao diện TypeScript**: Tạo giaoល interface `IInfoViewModel` với các thuộc tính tùy chọn (dùng `?`) theo tên cột tiếng Việt camelCase (ví dụ: `maKeHoach` cho "Mã Kế hoạch"). Thêm chú thích bằng tên cột tiếng Việt gốc có dấu.
-4. **Tạo dữ liệu giả lập**: Tạo mảng `mockData: IInfoViewModel[]` với ba bản ghi dựa trên bảng đã sửa. Dùng `undefined` cho dữ liệu thiếu. Định dạng các cột ngày ("Ngày Lập Kế hoạch", "Ngày Bắt đầu dự kiến", "Ngày Kết thúc dự kiến") thành `yyyy-mm-dd`.
-5. **Xử lý dữ liệu không rõ ràng**: Ưu tiên ba hàng đầu tiên của bảng và đặt các trường thiếu thành `undefined`. Nếu dữ liệu không rõ, báo lỗi và sử dụng dữ liệu hợp lý.
-6. **Đầu ra**: Chỉ trả về mã TypeScript thuần với giao diện và dữ liệu giả lập, không bao gồm markdown hoặc giải thích.
+Analyze the provided image to identify the table's actual column headers and content. Based on the extracted data, generate:
 
-Văn bản OCR của bảng:
----
-{{ ocr_text }}
----
+A TypeScript interface named IInfoViewModel that includes all identified attributes with their appropriate data types. Ensure that:
+- All attributes are optional (using `?`) to allow for undefined values.
+- Attribute names must be written in Vietnamese không dấu, sử dụng camelCase, và mang ý nghĩa rõ ràng. Không được để lại lỗi OCR trong tên thuộc tính (ví dụ: "tenGuoDoan" phải sửa thành "tenGiaiDoan").
+- Mỗi thuộc tính phải có chú thích (//) là tiếng Việt có dấu, mô tả chính xác tên cột sau khi đã sửa chính tả.
 
+An array named mockData of type IInfoViewModel[], populated with mock entries based on the extracted content.
+- Nếu một ô dữ liệu bị thiếu, biểu diễn bằng `undefined`.
+- Phải sửa tất cả lỗi chính tả hoặc lỗi nhận dạng ký tự từ kết quả OCR trong cả phần tên cột và nội dung.
+
+Return in plain text without markdown, explanations, or formatting.
+
+Note:
+The following is just a sample output format and does not reflect the data in the image. Use it as a structural reference only:
+
+// Example output format:
 export interface IInfoViewModel {
-    maKeHoach?: string; // Mã Kế hoạch
-    maBanBienSoan?: string; // Mã Ban Biên soạn
-    maDeXuat?: string; // Mã Đề xuất
-    tenGiaoTrinhDeXuat?: string; // Tên Giáo trình Đề xuất
-    ngayLapKeHoach?: string; // Ngày Lập Kế hoạch
-    ngayBatDauDuKien?: string; // Ngày Bắt đầu dự kiến
-    ngayKetThucDuKien?: string; // Ngày Kết thúc dự kiến
-    nguoiLapKeHoach?: string; // Người Lập Kế hoạch
-    trangThaiDuyetKeHoach?: string; // Trạng thái duyệt Kế hoạch
+    id?: number; // Mã định danh
+    cotChuoi?: string; // Cột chuỗi ví dụ
+    cotSo?: number; // Cột số ví dụ
+    cotNgay1?: string; // Ngày bắt đầu (dd/mm/yyyy)
+    cotNgay2?: string; // Ngày kết thúc (dd/mm/yyyy)
+    cotBoolean?: boolean; // Có hiệu lực hay không
+    cotTien?: number; // Số tiền
 }
 
 export const mockData: IInfoViewModel[] = [
     {
-        maKeHoach: "KHTT2025001_BUSY",
-        maBanBienSoan: "BBGT2025001",
-        maDeXuat: "GT2025001",
-        tenGiaoTrinhDeXuat: "Giáo trình Nguyên lý Kế toán",
-        ngayLapKeHoach: "2025-08-15",
-        ngayBatDauDuKien: "2025-08-20",
-        ngayKetThucDuKien: "2026-03-30",
-        nguoiLapKeHoach: "ThS. Nguyễn Văn Á (GV12345)",
-        trangThaiDuyetKeHoach: "Đang chờ duyệt"
+        id: 1,
+        cotChuoi: "Dữ liệu chuỗi mẫu",
+        cotSo: 123,
+        cotNgay1: "01/01/2023",
+        cotNgay2: "02/01/2023",
+        cotBoolean: true,
+        cotTien: 100000,
     },
     {
-        maKeHoach: "KHTT2025002",
-        maBanBienSoan: "BBGT2025002",
-        maDeXuat: "GT2025002",
-        tenGiaoTrinhDeXuat: "Giáo trình Phân tích Dữ liệu Lớn",
-        ngayLapKeHoach: "2025-08-18",
-        ngayBatDauDuKien: "2025-08-25",
-        ngayKetThucDuKien: "2026-04-15",
-        nguoiLapKeHoach: "TS. Hoàng D (GV99887)",
-        trangThaiDuyetKeHoach: "Đã duyệt"
-    },
-    {
-        maKeHoach: "KHTT2025003",
-        maBanBienSoan: "BBGT2025003",
-        maDeXuat: "GT2025004",
-        tenGiaoTrinhDeXuat: "Giáo trình Kinh tế Vĩ mô",
-        ngayLapKeHoach: "2025-08-20",
-        ngayBatDauDuKien: "2025-08-28",
-        ngayKetThucDuKien: "2026-05-30",
-        nguoiLapKeHoach: "PGS. Kim G (GV44556)",
-        trangThaiDuyetKeHoach: "Đang chờ duyệt"
+        id: 2,
+        cotChuoi: "Chuỗi khác",
+        cotSo: 456,
+        cotNgay1: "02/02/2023",
+        cotNgay2: "03/02/2023",
+        cotBoolean: false,
+        cotTien: 200000,
     }
 ]
+
+Be sure that the actual structure of the interface and mock data you generate corresponds to the real data found in the image, not the sample above. Use Vietnamese attribute names in camelCase, correct any spelling or typographical errors in the extracted data, and only return the TypeScript code block with the interface and mock data. Do not include any explanations, descriptions, or other content.
+
+Here is the OCR text from the image:
+---
+{{ocr_text}}
+---

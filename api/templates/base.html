@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AQ Code Generator</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230d6efd'/%3E%3Ctext x='32' y='40' font-size='32' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3EAQ%3C/text%3E%3C/svg%3E">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/main.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body style="background: var(--main-bg-gradient); min-height: 100vh;">
+    <header id="mainHeader" class="py-2 mb-4 border-bottom bg-white shadow-sm" style="background: var(--card-bg); transition: background 0.2s, color 0.2s;">
+        <div class="container d-flex flex-column flex-md-row align-items-center justify-content-center gap-2">
+            <span style="display:flex;align-items:center;gap:8px;">
+                <span style="display:inline-block;width:32px;height:32px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#0d6efd"/><text x="32" y="44" font-size="24" text-anchor="middle" fill="white" font-family="Arial" font-weight="bold">AQ</text></svg>
+                </span>
+                <span class="fw-bold fs-5 text-primary" style="letter-spacing:1px;">AQ Code Generator</span>
+            </span>
+        </div>
+    </header>
+    <button id="toggleModeBtn" class="btn btn-outline-secondary toggle-mode-btn" title="Toggle dark/light mode">
+        <i id="toggleModeIcon" class="bi bi-moon"></i>
+    </button>
+    {% block content %}{% endblock %}
+    <footer class="text-center text-muted small py-3" style="letter-spacing:1px;">
+        &copy; AQ New 05/2025
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/main.js"></script>
+    {% block extra_script %}{% endblock %}
+</body>
+</html> 
