@@ -18,8 +18,9 @@ def generate():
         return jsonify({'error': 'No image uploaded'}), 400
     image_file = request.files['image']
     image_bytes = image_file.read()
+    object_name = request.form.get('objectName', '')
     try:
-        code = generate_code_from_image(image_bytes)
+        code = generate_code_from_image(image_bytes, object_name)
         return jsonify({'code': code})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -138,6 +139,89 @@ def delete_snippet(snippet_id):
         return jsonify({'error': 'Snippet not found'}), 404
     save_snippets(new_snippets)
     return jsonify({'success': True})
+
+def load_snippet_groups():
+    if not os.path.exists(SNIPPETS_FILE):
+        return []
+    with open(SNIPPETS_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def save_snippet_groups(groups):
+    with open(SNIPPETS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(groups, f, ensure_ascii=False, indent=2)
+
+@app.route('/snippet-groups', methods=['GET'])
+def get_snippet_groups():
+    return jsonify(load_snippet_groups())
+
+@app.route('/snippet-groups', methods=['POST'])
+def add_snippet_group():
+    data = request.get_json()
+    group_name = data.get('group')
+    if not group_name:
+        return jsonify({'error': 'Missing group name'}), 400
+    groups = load_snippet_groups()
+    if any(g['group'] == group_name for g in groups):
+        return jsonify({'error': 'Group already exists'}), 400
+    groups.append({'group': group_name, 'snippets': []})
+    save_snippet_groups(groups)
+    return jsonify({'group': group_name, 'snippets': []})
+
+@app.route('/snippet-groups/<group>', methods=['DELETE'])
+def delete_snippet_group(group):
+    groups = load_snippet_groups()
+    new_groups = [g for g in groups if g['group'] != group]
+    if len(new_groups) == len(groups):
+        return jsonify({'error': 'Group not found'}), 404
+    save_snippet_groups(new_groups)
+    return jsonify({'success': True})
+
+@app.route('/snippet-groups/<group>/snippets', methods=['POST'])
+def add_snippet_to_group(group):
+    data = request.get_json()
+    name = data.get('name')
+    content = data.get('content')
+    if not name or not content:
+        return jsonify({'error': 'Missing name or content'}), 400
+    groups = load_snippet_groups()
+    for g in groups:
+        if g['group'] == group:
+            new_id = max([s['id'] for s in g['snippets']], default=0) + 1
+            snippet = {'id': new_id, 'name': name, 'content': content}
+            g['snippets'].append(snippet)
+            save_snippet_groups(groups)
+            return jsonify(snippet)
+    return jsonify({'error': 'Group not found'}), 404
+
+@app.route('/snippet-groups/<group>/snippets/<int:snippet_id>', methods=['PUT'])
+def update_snippet_in_group(group, snippet_id):
+    data = request.get_json()
+    name = data.get('name')
+    content = data.get('content')
+    groups = load_snippet_groups()
+    for g in groups:
+        if g['group'] == group:
+            for s in g['snippets']:
+                if s['id'] == snippet_id:
+                    if name: s['name'] = name
+                    if content: s['content'] = content
+                    save_snippet_groups(groups)
+                    return jsonify(s)
+            return jsonify({'error': 'Snippet not found'}), 404
+    return jsonify({'error': 'Group not found'}), 404
+
+@app.route('/snippet-groups/<group>/snippets/<int:snippet_id>', methods=['DELETE'])
+def delete_snippet_in_group(group, snippet_id):
+    groups = load_snippet_groups()
+    for g in groups:
+        if g['group'] == group:
+            new_snippets = [s for s in g['snippets'] if s['id'] != snippet_id]
+            if len(new_snippets) == len(g['snippets']):
+                return jsonify({'error': 'Snippet not found'}), 404
+            g['snippets'] = new_snippets
+            save_snippet_groups(groups)
+            return jsonify({'success': True})
+    return jsonify({'error': 'Group not found'}), 404
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1',port=5173,debug=True)

@@ -1,25 +1,16 @@
-<div class="row g-4">
-    <div class="col-md-12">
+<div class="row g-4 justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
         <div class="text-center mb-4">
             <h2 class="fw-bold text-info" style="letter-spacing: 1px;">Code Snippet Library</h2>
         </div>
         <div class="card shadow-sm border-0 rounded-4 mb-4 snippet-card">
             <div class="card-body">
-                <form id="snippetForm" class="mb-3 snippet-form">
-                    <div class="row g-2 align-items-center">
-                        <div class="col-md-3">
-                            <input type="text" id="snippetName" class="form-control snippet-input" placeholder="Snippet name" required />
-                        </div>
-                        <div class="col-md-7">
-                            <textarea id="snippetContent" class="form-control snippet-ta" rows="2" placeholder="Snippet content" required></textarea>
-                        </div>
-                        <div class="col-md-2 d-flex gap-2">
-                            <button type="submit" class="btn btn-success btn-sm snippet-btn">Save</button>
-                            <button type="button" id="cancelEditSnippet" class="btn btn-secondary btn-sm d-none snippet-btn">Cancel</button>
-                        </div>
-                    </div>
+                <form id="snippetGroupForm" class="mb-3 d-flex gap-2 align-items-center flex-wrap">
+                    <input type="text" id="snippetGroupName" class="form-control snippet-input" placeholder="New group name" required style="max-width:220px;" />
+                    <button type="submit" class="btn btn-primary btn-sm snippet-btn">Add Group</button>
                 </form>
-                <div id="snippetsList"></div>
+                <ul class="nav nav-tabs mb-3 flex-nowrap overflow-auto" id="snippetGroupTabs" role="tablist" style="white-space:nowrap;"></ul>
+                <div class="tab-content" id="snippetGroupTabContent"></div>
             </div>
         </div>
     </div>

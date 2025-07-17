@@ -14,7 +14,7 @@ def strip_markdown_codeblock(text):
         return match.group(1)
     return text
 
-def generate_code_from_image(image_bytes):
+def generate_code_from_image(image_bytes, object_name=None):
     # Save image_bytes to a temp file
     with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as tmp:
         tmp.write(image_bytes)
@@ -30,7 +30,7 @@ def generate_code_from_image(image_bytes):
             prompt_template = f.read()
         print("Prompt template loaded")
         # Render prompt using Jinja2
-        prompt = Template(prompt_template).render(ocr_text=ocr_text)
+        prompt = Template(prompt_template).render(ocr_text=ocr_text, object_name=object_name or "")
         print(prompt)
         print("Prompt ready")
         API_KEY = os.environ.get("GEMINI_API_KEY")

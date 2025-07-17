@@ -1,56 +1,17 @@
-You are an advanced AI capable of analyzing images and generating structured data representations. Your task is to process an image containing a table and extract relevant information to generate a TypeScript interface and corresponding mock data.
+Khi tôi gửi cho bạn một bảng dữ liệu, bạn hãy thực hiện các yêu cầu sau:
 
-Analyze the provided image to identify the table's actual column headers and content. Based on the extracted data, generate:
+1. Tạo một interface TypeScript với tên dạng I{{object_name}}ViewModel.
 
-A TypeScript interface named IInfoViewModel that includes all identified attributes with their appropriate data types. Ensure that:
-- All attributes are optional (using `?`) to allow for undefined values.
-- Attribute names must be written in Vietnamese không dấu, sử dụng camelCase, và mang ý nghĩa rõ ràng. Không được để lại lỗi OCR trong tên thuộc tính (ví dụ: "tenGuoDoan" phải sửa thành "tenGiaiDoan").
-- Mỗi thuộc tính phải có chú thích (//) là tiếng Việt có dấu, mô tả chính xác tên cột sau khi đã sửa chính tả.
+   * Nếu có trường id thì đổi tên thành code.
+   * Tất cả các thuộc tính đều phải có dấu ?.
+   * Sau mỗi thuộc tính phải có comment // chứa tên cột chính xác 100% như trong hình.
 
-An array named mockData of type IInfoViewModel[], populated with mock entries based on the extracted content.
-- Nếu một ô dữ liệu bị thiếu, biểu diễn bằng `undefined`.
-- Phải sửa tất cả lỗi chính tả hoặc lỗi nhận dạng ký tự từ kết quả OCR trong cả phần tên cột và nội dung.
+2. Tạo một mảng mock data với tên const mockData{{object_name}}: I{{object_name}}ViewModel[].
 
-Return in plain text without markdown, explanations, or formatting.
+   * Mock data phải lấy 100% dữ liệu từ hình ảnh gốc.
 
-Note:
-The following is just a sample output format and does not reflect the data in the image. Use it as a structural reference only:
-
-// Example output format:
-export interface IInfoViewModel {
-    id?: number; // Mã định danh
-    cotChuoi?: string; // Cột chuỗi ví dụ
-    cotSo?: number; // Cột số ví dụ
-    cotNgay1?: string; // Ngày bắt đầu (dd/mm/yyyy)
-    cotNgay2?: string; // Ngày kết thúc (dd/mm/yyyy)
-    cotBoolean?: boolean; // Có hiệu lực hay không
-    cotTien?: number; // Số tiền
-}
-
-export const mockData: IInfoViewModel[] = [
-    {
-        id: 1,
-        cotChuoi: "Dữ liệu chuỗi mẫu",
-        cotSo: 123,
-        cotNgay1: "01/01/2023",
-        cotNgay2: "02/01/2023",
-        cotBoolean: true,
-        cotTien: 100000,
-    },
-    {
-        id: 2,
-        cotChuoi: "Chuỗi khác",
-        cotSo: 456,
-        cotNgay1: "02/02/2023",
-        cotNgay2: "03/02/2023",
-        cotBoolean: false,
-        cotTien: 200000,
-    }
-]
-
-Be sure that the actual structure of the interface and mock data you generate corresponds to the real data found in the image, not the sample above. Use Vietnamese attribute names in camelCase, correct any spelling or typographical errors in the extracted data, and only return the TypeScript code block with the interface and mock data. Do not include any explanations, descriptions, or other content.
+   * Không cần comment.
+   * Các trường ngày tháng (ví dụ: "Ngày cập nhật") phải được chuyển sang định dạng yyyy-mm-dd.
 
 Here is the OCR text from the image:
----
 {{ocr_text}}
----

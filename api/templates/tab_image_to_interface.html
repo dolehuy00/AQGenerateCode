@@ -1,28 +1,32 @@
-<div class="row g-4">
-    <div class="col-md-12">
+<div class="row g-4 justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
         <div class="text-center mb-4">
-            <h1 class="fw-bold text-primary" style="letter-spacing: 1px;">Generate Inteface And Mock Data From Image</h1>
+            <h1 class="fw-bold text-primary" style="letter-spacing: 1px;">Generate Interface & Mock Data From Image</h1>
+        </div>
+        <!-- Object Name Input -->
+        <div class="mb-3">
+            <label for="objectNameInput" class="form-label fw-semibold">Object Name (PascalCase, không dấu, không khoảng trắng):</label>
+            <input type="text" id="objectNameInput" class="form-control" placeholder="Ví dụ: GiaoTrinh, HocSinh, ..." />
         </div>
         <!-- Image Paste Input -->
         <div class="card shadow-sm mb-4 border-0 rounded-4">
             <div class="card-body">
                 <label for="imagePasteArea" class="form-label fw-semibold">Paste (Ctrl+V) an image here:</label>
                 <div id="imagePasteArea"
-                    class="border border-2 border-primary rounded-3 p-4 text-center bg-light position-relative"
+                    class="border border-2 border-primary rounded-3 p-4 text-center bg-light position-relative mb-3"
                     style="min-height: 200px; cursor: pointer; transition: box-shadow 0.2s;">
-                    <span id="placeholderText" class="text-secondary"><i class="bi bi-image"
-                            style="font-size: 2rem;"></i><br>Click or press Ctrl+V to paste an image</span>
+                    <span id="placeholderText" class="text-secondary"><i class="bi bi-image display-4"></i><br>Click or press Ctrl+V to paste an image</span>
                     <span class="image-preview-wrapper" id="imgPreviewWrapper">
                         <img id="previewImage" src="" alt="Preview"
                             class="img-fluid d-none mt-2 rounded-3 shadow-sm" style="max-height: 180px;" />
-                        <button id="clearImgBtn" type="button" class="clear-img-btn" title="Clear image"><i
+                        <button id="clearImgBtn" type="button" class="clear-img-btn btn btn-sm btn-danger" title="Clear image"><i
                                 class="bi bi-trash"></i></button>
                     </span>
                 </div>
                 <input type="file" id="hiddenFileInput" accept="image/*" class="d-none" />
                 <div class="d-flex justify-content-end mt-3">
                     <button id="generateBtn" type="button"
-                        class="btn btn-primary d-flex align-items-center gap-1 shadow-sm"><i
+                        class="btn btn-primary d-flex align-items-center gap-2 shadow-sm px-4 py-2"><i
                             class="bi bi-lightning-charge"></i>Generate</button>
                 </div>
             </div>
@@ -31,10 +35,10 @@
         <div class="card shadow-sm border-0 rounded-4 mb-4">
             <div class="card-body">
                 <label for="resultTextarea" class="form-label fw-semibold">Generated Code</label>
-                <textarea id="resultTextarea" class="form-control rounded-3" rows="4"
+                <textarea id="resultTextarea" class="form-control rounded-3 mb-2" rows="4"
                     placeholder="Code will appear here..."
                     style="resize: none; overflow: hidden; background: #f8fafc;"></textarea>
-                <div class="d-flex justify-content-end gap-2 mt-2">
+                <div class="d-flex justify-content-end gap-2">
                     <button id="copyBtn" type="button"
                         class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 shadow-sm"
                         title="Copy"><i class="bi bi-clipboard"></i>Copy</button>
@@ -48,8 +52,8 @@
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body">
                 <label for="columnsFromImageTextarea" class="form-label fw-semibold">Generated Columns Code</label>
-                <textarea id="columnsFromImageTextarea" class="form-control rounded-3" rows="12" readonly style="font-family:monospace;"></textarea>
-                <div class="d-flex justify-content-end gap-2 mt-2">
+                <textarea id="columnsFromImageTextarea" class="form-control rounded-3 mb-2" rows="12" readonly style="font-family:monospace;"></textarea>
+                <div class="d-flex justify-content-end gap-2">
                     <button id="copyColumnsFromImageBtn" type="button"
                         class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 shadow-sm"
                         title="Copy"><i class="bi bi-clipboard"></i>Copy</button>

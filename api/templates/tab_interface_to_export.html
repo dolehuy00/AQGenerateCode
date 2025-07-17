@@ -1,19 +1,19 @@
-<div class="row g-4">
-    <div class="col-md-12">
+<div class="row g-4 justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
         <div class="text-center mb-4">
             <h2 class="fw-bold text-warning" style="letter-spacing: 1px;">Interface ➔ Export Config</h2>
         </div>
         <div class="card shadow-sm border-0 rounded-4 mb-4">
             <div class="card-body">
                 <label for="interfaceExportTextarea" class="form-label fw-semibold">Paste your TypeScript interface here:</label>
-                <textarea id="interfaceExportTextarea" class="form-control rounded-3" rows="10" placeholder="Paste your interface here..."></textarea>
+                <textarea id="interfaceExportTextarea" class="form-control rounded-3 mb-2" rows="10" placeholder="Paste your interface here..."></textarea>
             </div>
         </div>
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body">
                 <label for="exportConfigTextarea" class="form-label fw-semibold">Generated Export Config</label>
-                <textarea id="exportConfigTextarea" class="form-control rounded-3" rows="12" readonly style="font-family:monospace;"></textarea>
-                <div class="d-flex justify-content-end gap-2 mt-2">
+                <textarea id="exportConfigTextarea" class="form-control rounded-3 mb-2" rows="12" readonly style="font-family:monospace;"></textarea>
+                <div class="d-flex justify-content-end gap-2">
                     <button id="copyExportConfigBtn" type="button"
                         class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 shadow-sm"
                         title="Copy"><i class="bi bi-clipboard"></i>Copy</button>
