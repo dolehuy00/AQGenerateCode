@@ -16,6 +16,11 @@
         "id": 4,
         "name": "Page",
         "content": "'use client'\n\nimport { MyPageContent } from \"aq-fe-framework/components\";\n\nexport default function Page() {\n    return (\n        <MyPageContent>\n        </MyPageContent>\n    )\n}"
+      },
+      {
+        "id": 5,
+        "name": "BaseRead",
+        "content": "'use client'\nimport { useQuery } from \"@tanstack/react-query\";\nimport {\n  MyButton,\n  MyCenterFull,\n  MyDataTable,\n  MyFieldset\n} from \"aq-fe-framework/components\";\nimport { MRT_ColumnDef } from \"mantine-react-table\";\nimport { useMemo } from \"react\";\n\n\nexport default function BaseRead() {\n  const query = useQuery<IInfoViewModel[]>({\n    queryKey: ['BaseRead'],\n    queryFn: async () => []\n  });\n\n  const columns = useMemo<MRT_ColumnDef<IInfoViewModel>[]>(() => [\n    {\n      header: \"\",\n      accessorKey: \"\",\n    },\n  ], []);\n\n  return (\n    <MyFieldset title=\"\">\n      <MyDataTable\n        isError={query.isError}\n        isLoading={query.isLoading}\n        columns={columns}\n        data={query.data || []}\n        renderTopToolbarCustomActions={({ table }) => (\n          <MyCenterFull>\n            <AQButtonCreateByImportFile\n                form={useForm<any>({\n                  initialValues: {\n                    importedData: [],\n                  },\n                })}\n                onSubmit={() =>{}})}\n              />\n            <MyButton\n                leftSection={<IconTableExport />}\n                color=\"teal\"\n                size=\"sm\"\n                radius=\"sm\"\n                onClick={() => {\n                  notifications.show({\n                    title: \"Thông báo\",\n                    message:\n                      \"Chức năng này đang được phát triển, vui lòng quay lại sau.\",\n                    color: \"blue\",\n                    autoClose: 5000,\n                  });\n                }}\n              >\n                Export\n              </MyButton>\n            <BaseDeleteList\n              values={table\n                .getSelectedRowModel()\n                .flatRows.flatMap((item) => item.original)} />\n          </MyCenterFull>\n        )}\n        renderRowActions={({ row }) => (\n          <MyCenterFull>\n            Thao tác\n          </MyCenterFull>\n        )}\n      />\n    </MyFieldset>\n  );\n}"
       }
     ]
   },
@@ -31,6 +36,16 @@
         "id": 2,
         "name": "Import Button",
         "content": "<AQButtonCreateByImportFile\n                form={useForm<any>({\n                  initialValues: {\n                    importedData: [],\n                  },\n                })}\n                onSubmit={() => console.log(form_multiple.values)}\n              />"
+      }
+    ]
+  },
+  {
+    "group": "Tip",
+    "snippets": [
+      {
+        "id": 1,
+        "name": "Align input with a button",
+        "content": "inputContainer={(children) => (\n              <Group align=\"flex-start\">\n                {children}\n                <MyButton />\n              </Group>\n            )}"
       }
     ]
   }

@@ -49,9 +49,15 @@ def generate_columns_from_interface(code):
     lines = code.split('\n')
     fields = []
     in_interface = False
+    interface_name = 'ICRUD'
     for line in lines:
         line = line.strip()
-        if line.startswith('export interface'): in_interface = True
+        # Lấy tên interface
+        if line.startswith('export interface'):
+            in_interface = True
+            match = re.match(r'export interface (\w+)', line)
+            if match:
+                interface_name = match.group(1)
         if in_interface and line.startswith('}'): in_interface = False
         if in_interface and '?:' in line:
             match = re.match(r'(\w+)\?\:\s*([\w\[\]]+)\s*;\s*\/\/\s*(.+)$', line)
@@ -66,7 +72,7 @@ def generate_columns_from_interface(code):
                     'comment_norm': strip_accents(comment),
                     'name_norm': strip_accents(name)
                 })
-    col_code = 'const columns = useMemo<MRT_ColumnDef<ICRUD>[]>(\n    () => [\n'
+    col_code = f'const columns = useMemo<MRT_ColumnDef<{interface_name}>[]>(\n    () => [\n'
     for f in fields:
         col_code += '        {\n'
         col_code += f'            header: "{f["comment"]}",\n'
