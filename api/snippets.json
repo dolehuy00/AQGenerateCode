@@ -21,6 +21,11 @@
         "id": 5,
         "name": "BaseRead",
         "content": "'use client'\nimport { useQuery } from \"@tanstack/react-query\";\nimport {\n  MyButton,\n  MyCenterFull,\n  MyDataTable,\n  MyFieldset\n} from \"aq-fe-framework/components\";\nimport { MRT_ColumnDef } from \"mantine-react-table\";\nimport { useMemo } from \"react\";\n\n\nexport default function BaseRead() {\n  const query = useQuery<IInfoViewModel[]>({\n    queryKey: ['BaseRead'],\n    queryFn: async () => []\n  });\n\n  const columns = useMemo<MRT_ColumnDef<IInfoViewModel>[]>(() => [\n    {\n      header: \"\",\n      accessorKey: \"\",\n    },\n  ], []);\n\n  return (\n    <MyFieldset title=\"\">\n      <MyDataTable\n        isError={query.isError}\n        isLoading={query.isLoading}\n        columns={columns}\n        data={query.data || []}\n        renderTopToolbarCustomActions={({ table }) => (\n          <MyCenterFull>\n            <AQButtonCreateByImportFile\n                form={useForm<any>({\n                  initialValues: {\n                    importedData: [],\n                  },\n                })}\n                onSubmit={() =>{}})}\n              />\n            <MyButton\n                leftSection={<IconTableExport />}\n                color=\"teal\"\n                size=\"sm\"\n                radius=\"sm\"\n                onClick={() => {\n                  notifications.show({\n                    title: \"Thông báo\",\n                    message:\n                      \"Chức năng này đang được phát triển, vui lòng quay lại sau.\",\n                    color: \"blue\",\n                    autoClose: 5000,\n                  });\n                }}\n              >\n                Export\n              </MyButton>\n            <BaseDeleteList\n              values={table\n                .getSelectedRowModel()\n                .flatRows.flatMap((item) => item.original)} />\n          </MyCenterFull>\n        )}\n        renderRowActions={({ row }) => (\n          <MyCenterFull>\n            Thao tác\n          </MyCenterFull>\n        )}\n      />\n    </MyFieldset>\n  );\n}"
+      },
+      {
+        "id": 6,
+        "name": "BaseButtonModal",
+        "content": "'use client'\nimport { useDisclosure } from \"@mantine/hooks\";\nimport {\n  MyButtonModal,\n} from \"aq-fe-framework/components\";\n\n\n\nexport default function BaseButtonModal() {\n  const disc = useDisclosure();\n\n\n  return (\n    <MyButtonModal label=\"\" variant=\"transparent\" color=\"blue\" modalSize={\"90%\"} disclosure={disc}>\n     \n    </MyButtonModal>\n  );\n}"
       }
     ]
   },
@@ -35,7 +40,7 @@
       {
         "id": 2,
         "name": "Import Button",
-        "content": "<AQButtonCreateByImportFile\n                form={useForm<any>({\n                  initialValues: {\n                    importedData: [],\n                  },\n                })}\n                onSubmit={() => console.log(form_multiple.values)}\n              />"
+        "content": "<AQButtonCreateByImportFile\n              form={useForm<any>({\n                initialValues: {\n                  importedData: [],\n                },\n              })}\n              onSubmit={() => { }}\n              />"
       }
     ]
   },
@@ -46,6 +51,16 @@
         "id": 1,
         "name": "Align input with a button",
         "content": "inputContainer={(children) => (\n              <Group align=\"flex-start\">\n                {children}\n                <MyButton />\n              </Group>\n            )}"
+      }
+    ]
+  },
+  {
+    "group": "MyComponent",
+    "snippets": [
+      {
+        "id": 1,
+        "name": "RenderStatus",
+        "content": "import { Badge } from \"@mantine/core\";\nimport {\n  IconBan,\n  IconCheck,\n  IconClock,\n  IconHelpCircle,\n  IconX,\n} from \"@tabler/icons-react\";\n\ninterface RenderStatusProps {\n  value: string;\n  successes?: string[];\n  failures?: string[];\n  inProgress?: string[];\n  canceled?: string[];\n}\n\nexport function RenderStatus({\n  value,\n  successes = [],\n  failures = [],\n  inProgress = [],\n  canceled = [],\n}: RenderStatusProps) {\n  const getColor = () => {\n    if (successes.includes(value)) return \"green\";     // trạng thái tốt\n    if (failures.includes(value)) return \"red\";        // trạng thái tiêu cực\n    if (inProgress.includes(value)) return \"blue\";     // đang diễn ra\n    if (canceled.includes(value)) return \"gray\";       // bị hủy\n    return \"default\";\n  };\n\n  const getIcon = () => {\n    if (successes.includes(value)) return <IconCheck size={16} />;\n    if (failures.includes(value)) return <IconX size={16} />;\n    if (inProgress.includes(value)) return <IconClock size={16} />;\n    if (canceled.includes(value)) return <IconBan size={16} />;\n    return <IconHelpCircle size={16} />;\n  };\n\n  return (\n    <Badge\n      w=\"100%\"\n      h={25}\n      leftSection={getIcon()}\n      variant=\"light\"\n      color={getColor()}\n      radius=\"md\"\n      fw={700}\n    >\n      {value}\n    </Badge>\n  );\n}"
       }
     ]
   }

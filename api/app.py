@@ -83,7 +83,7 @@ def generate_columns_from_interface(code):
             col_code += '            Cell: ({ cell }) => utils_date_dateToDDMMYYYString(new Date(cell.getValue<string>()))\n'
         # Nhận biết checkbox/boolean
         elif f['type'] == 'boolean' or 'checkbox' in f['comment_norm'] or 'bool' in f['comment_norm']:
-            col_code += '            Cell: ({ cell }) => <MyCenterFull><Checkbox checked={cell.getValue<boolean>()} /></MyCenterFull>,\n'
+            col_code += '            Cell: ({ cell }) => <MyCenterFull><Checkbox checked={cell.getValue<boolean>()} readOnly /></MyCenterFull>,\n'
         # Nhận biết tiền
         elif (f['type'] == 'number' and (
             'tien' in f['comment_norm'] or 'gia' in f['comment_norm'] or 'price' in f['name_norm'])):

@@ -1,17 +1,21 @@
-Khi tôi gửi cho bạn một bảng dữ liệu, bạn hãy thực hiện các yêu cầu sau:
+Khi tôi gửi cho bạn một hình ảnh chụp bảng dữ liệu và tên object (ví dụ: TrainingProgram), bạn hãy thực hiện các yêu cầu sau:
 
-1. Tạo một interface TypeScript với tên dạng I{{object_name}}ViewModel.
+Hãy chuẩn hóa nội dung bảng dữ liệu cho đúng chính tả, đúng ngữ cảnh, hợp lý
 
+1. Tạo một export interface TypeScript với tên dạng I{{object_name}}ViewModel. Ví dụ: ITrainingProgramViewModel.
+   * Các thuộc tính phải là tiếng anh
+   * Các thuộc tính có kiểu dữ liệu phù hợp.
    * Nếu có trường id thì đổi tên thành code.
-   * Tất cả các thuộc tính đều phải có dấu ?.
+   * Tất cả các thuộc tính đều phải có dấu `?`.
    * Sau mỗi thuộc tính phải có comment // chứa tên cột chính xác 100% như trong hình.
 
-2. Tạo một mảng mock data với tên const mockData{{object_name}}: I{{object_name}}ViewModel[].
-
+2. Tạo một mảng export mock data với tên const {{object_name_plural}}: I{{object_name}}ViewModel[]. Ví dụ: const trainingPrograms: ITrainingProgramViewModel[].
    * Mock data phải lấy 100% dữ liệu từ hình ảnh gốc.
-
    * Không cần comment.
    * Các trường ngày tháng (ví dụ: "Ngày cập nhật") phải được chuyển sang định dạng yyyy-mm-dd.
 
-Here is the OCR text from the image:
+Nội dung trả về chỉ bao gồm interface và mockData, không giải thích
+
+Đây là nội dung bảng OCR:
 {{ocr_text}}
+
