@@ -98,3 +98,35 @@ body.dark-mode .list-group-item {
     color: var(--text-main) !important;
     border-color: var(--border-color) !important;
 } 
+.grid-row-config {
+  border: 1px solid #e3e6f0;
+  border-radius: 12px;
+  background: #f8fafc;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+}
+.grid-row-config .form-label {
+  font-weight: 500;
+  margin-bottom: 0;
+}
+.grid-row-config .form-check-label {
+  font-size: 0.95em;
+  color: #0d6efd;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.grid-row-config .input-group {
+  margin-bottom: 0 !important;
+}
+#gridPreview {
+  border: 1px solid #b6d4fe;
+  border-radius: 8px;
+  background: #f1f8ff;
+  padding: 12px 8px;
+}
+#gridCodeTextarea {
+  background: #f8fafc;
+  border-radius: 8px;
+} 

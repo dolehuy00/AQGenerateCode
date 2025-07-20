@@ -3,7 +3,9 @@ from flask_cors import CORS
 from generate_infoviewmodel import generate_code_from_image
 import json
 import os
+import google.generativeai as genai
 SNIPPETS_FILE = os.path.join(os.path.dirname(__file__), 'snippets.json')
+PROMPTS_FILE = os.path.join(os.path.dirname(__file__), 'prompts.json')
 
 app = Flask(__name__)
 CORS(app)
@@ -228,6 +230,85 @@ def delete_snippet_in_group(group, snippet_id):
             save_snippet_groups(groups)
             return jsonify({'success': True})
     return jsonify({'error': 'Group not found'}), 404
+
+def load_prompts():
+    if not os.path.exists(PROMPTS_FILE):
+        return []
+    with open(PROMPTS_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def save_prompts(prompts):
+    with open(PROMPTS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(prompts, f, ensure_ascii=False, indent=2)
+
+@app.route('/prompts', methods=['GET'])
+def get_prompts():
+    return jsonify(load_prompts())
+
+@app.route('/prompts', methods=['POST'])
+def add_prompt():
+    data = request.get_json()
+    prompts = load_prompts()
+    new_id = max([p['id'] for p in prompts], default=0) + 1
+    prompt = {
+        'id': new_id,
+        'name': data.get('name', ''),
+        'content': data.get('content', ''),
+        'note': data.get('note', '')
+    }
+    prompts.append(prompt)
+    save_prompts(prompts)
+    return jsonify(prompt)
+
+@app.route('/prompts/<int:pid>', methods=['PUT'])
+def update_prompt(pid):
+    data = request.get_json()
+    prompts = load_prompts()
+    for p in prompts:
+        if p['id'] == pid:
+            p['name'] = data.get('name', p['name'])
+            p['content'] = data.get('content', p['content'])
+            p['note'] = data.get('note', p['note'])
+            save_prompts(prompts)
+            return jsonify(p)
+    return jsonify({'error': 'Not found'}), 404
+
+@app.route('/prompts/<int:pid>', methods=['DELETE'])
+def delete_prompt(pid):
+    prompts = load_prompts()
+    prompts = [p for p in prompts if p['id'] != pid]
+    save_prompts(prompts)
+    return '', 204
+
+import re
+
+def strip_markdown_codeblock(text):
+    # Loại bỏ code block markdown nếu có
+    pattern = r"^```[a-zA-Z]*\n([\s\S]*?)\n```$"
+    match = re.match(pattern, text.strip())
+    if match:
+        return match.group(1)
+    return text
+
+def call_gemini_text(prompt_text):
+    API_KEY = os.environ.get("GEMINI_API_KEY")
+    genai.configure(api_key=API_KEY)
+    model = genai.GenerativeModel('gemini-2.0-flash-exp')
+    response = model.generate_content(prompt_text)
+    result = response.text
+    result = strip_markdown_codeblock(result)
+    return result
+
+@app.route('/send-prompt', methods=['POST'])
+def send_prompt():
+    data = request.get_json()
+    prompt_text = data.get('prompt_text', '')
+    user_text = data.get('user_text', '')
+    try:
+        result = call_gemini_text(prompt_text + '\n' + user_text)
+    except Exception as e:
+        result = f"[Lỗi AI]: {str(e)}"
+    return jsonify({'result': result})
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1',port=5173,debug=True)

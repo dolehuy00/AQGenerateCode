@@ -1,0 +1,8 @@
+[
+  {
+    "id": 1,
+    "name": "Tạo enum",
+    "content": "Khi tôi cung cấp tên enum và danh sách giá trị tiếng Việt, hãy tạo cho tôi 2 đoạn mã:\n1. `export enum enum_{tên}`: các key là tiếng Anh PascalCase, giá trị bắt đầu từ 1\n2. `export const enumLabel_{tên}`: ánh xạ `Record<enum_{tên}, string>` từ enum sang chuỗi tiếng Việt\nChỉ trả về code, không giải thích.\nVí dụ:\nTên enum: `proficiency`\nGiá trị: `\"Kiến thức\", \"Kỹ năng\", \"Năng lực tự chủ và trách nhiệm\"`\nOutput:\nexport enum enum_proficiency {\n    Knowledge = 1,\n    Skills = 2,\n    AutonomyResponsibility = 3\n}\nexport const enumLabel_proficiency: Record<enum_proficiency, string> = {\n    [enum_proficiency.Knowledge]: \"Kiến thức\",\n    [enum_proficiency.Skills]: \"Kỹ năng\",\n    [enum_proficiency.AutonomyResponsibility]: \"Năng lực tự chủ và trách nhiệm\",\n};",
+    "note": "Nội dung cần tên enum và các giá trị của enum đó"
+  }
+]

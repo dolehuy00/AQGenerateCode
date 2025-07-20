@@ -1,5 +1,4 @@
 import google.generativeai as genai
-from ocr import get_ocr_text_from_image
 import os
 import tempfile
 import traceback
@@ -15,22 +14,13 @@ def strip_markdown_codeblock(text):
     return text
 
 def generate_code_from_image(image_bytes, object_name=None):
-    # Save image_bytes to a temp file
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as tmp:
-        tmp.write(image_bytes)
-        tmp_path = tmp.name
     try:
-        # Get OCR text
-        ocr_text = get_ocr_text_from_image(tmp_path)
-        print("OCR text:", ocr_text)
-        if ocr_text is None:
-            raise Exception("Failed to get OCR text from the image.")
         # Read prompt template from Jinja2 file
         with open(os.path.join(os.path.dirname(__file__), 'prompt.j2'), 'r', encoding='utf-8') as f:
             prompt_template = f.read()
         print("Prompt template loaded")
-        # Render prompt using Jinja2
-        prompt = Template(prompt_template).render(ocr_text=ocr_text, object_name=object_name or "")
+        # Render prompt using Jinja2 (ocr_text để trống, sẽ được Gemini OCR)
+        prompt = Template(prompt_template).render(ocr_text="", object_name=object_name or "")
         print(prompt)
         print("Prompt ready")
         API_KEY = os.environ.get("GEMINI_API_KEY")
@@ -38,7 +28,11 @@ def generate_code_from_image(image_bytes, object_name=None):
         genai.configure(api_key=API_KEY)
         model = genai.GenerativeModel('gemini-2.0-flash-exp')
         try:
-            response = model.generate_content(prompt)
+            # Gửi prompt + ảnh cho Gemini, để Gemini tự OCR và sinh code
+            response = model.generate_content([
+                {"text": prompt},
+                {"mime_type": "image/png", "data": image_bytes}
+            ])
             print("Gemini response:", response)
             generated_code = response.text
             # Loại bỏ markdown code block nếu có
@@ -48,8 +42,7 @@ def generate_code_from_image(image_bytes, object_name=None):
             print("Error when calling Gemini API:", str(e))
             traceback.print_exc()
             raise
-    finally:
-        try:
-            os.remove(tmp_path)
-        except Exception:
-            pass
+    except Exception as e:
+        print("Error in generate_code_from_image:", str(e))
+        traceback.print_exc()
+        raise

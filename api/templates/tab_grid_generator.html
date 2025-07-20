@@ -1,0 +1,35 @@
+<div class="row g-4 justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-info" style="letter-spacing: 1px;">Grid Generator</h2>
+            <div class="text-muted">Tạo code Grid layout nhanh chóng</div>
+        </div>
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+            <div class="card-body">
+                <form id="gridGenForm" class="mb-3">
+                    <div class="row g-2 align-items-end mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Số dòng</label>
+                            <input type="number" min="1" max="10" class="form-control" id="numRowsInput" value="3" />
+                        </div>
+                    </div>
+                    <div id="rowsConfigArea"></div>
+                </form>
+                <label class="form-label fw-semibold">Grid Preview</label>
+                <div id="gridPreview" class="mb-3"></div>
+                <div class="d-flex justify-content-end mb-3">
+                    <button type="button" class="btn btn-primary px-4" id="generateGridBtn">
+                        <i class="bi bi-lightning-charge"></i> Generate
+                    </button>
+                </div>
+                <label class="form-label fw-semibold">Generated Grid Code</label>
+                <textarea id="gridCodeTextarea" class="form-control rounded-3 mb-2" rows="12" readonly style="font-family:monospace;"></textarea>
+                <div class="d-flex justify-content-end gap-2 mb-3">
+                    <button id="copyGridCodeBtn" type="button"
+                        class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 shadow-sm"
+                        title="Copy"><i class="bi bi-clipboard"></i>Copy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
